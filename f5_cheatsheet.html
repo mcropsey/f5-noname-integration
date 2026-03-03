@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F5 + Akamai API Security — Demo Cheat Sheet</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: #0a0e17;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 32px 24px;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #1e2d45;
+  }
+
+  .header-left h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: #f0f6ff;
+  }
+
+  .header-left .sub {
+    font-size: 12px;
+    color: #4a7fa5;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    background: #0d2137;
+    border: 1px solid #1e4060;
+    color: #4a9fd5;
+    padding: 4px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.8px;
+  }
+
+  /* Flow bar */
+  .flow-bar {
+    background: #0d1a2a;
+    border: 1px solid #1a3050;
+    border-radius: 6px;
+    padding: 12px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .flow-bar .label {
+    font-size: 10px;
+    color: #3a6a8a;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 1px;
+    margin-right: 14px;
+    text-transform: uppercase;
+  }
+
+  .flow-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #7ec8e3;
+    white-space: nowrap;
+  }
+
+  .flow-arrow {
+    color: #1e4060;
+    margin: 0 8px;
+    font-size: 13px;
+  }
+
+  /* Steps grid */
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .step {
+    background: #0d1520;
+    border: 1px solid #1a2d45;
+    border-radius: 6px;
+    padding: 16px 18px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .step:hover {
+    border-color: #2a5a8a;
+  }
+
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: #1e4060;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #f0f6ff;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .object-type {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    background: #0a1e35;
+    border: 1px solid #1a3a5a;
+    color: #3a7fa5;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .object-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #4a9fd5;
+    margin-bottom: 8px;
+  }
+
+  .step-desc {
+    font-size: 12px;
+    color: #7a9ab5;
+    line-height: 1.55;
+  }
+
+  .step-desc strong {
+    color: #a8c8e0;
+    font-weight: 600;
+  }
+
+  /* Key settings */
+  .key-settings {
+    margin-top: 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .kv {
+    display: flex;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    align-items: baseline;
+  }
+
+  .kv-key {
+    color: #2a5a7a;
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  .kv-val {
+    color: #5ab0d5;
+  }
+
+  /* Wide step */
+  .step.wide {
+    grid-column: span 2;
+  }
+
+  /* Warning note */
+  .warn {
+    background: #12100a;
+    border: 1px solid #3a2a0a;
+    border-left: 3px solid #c07010;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 11px;
+    color: #a07030;
+    margin-top: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.5;
+  }
+
+  .warn span {
+    color: #c07010;
+    font-weight: 600;
+  }
+
+  /* Footer */
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .info-box {
+    background: #0d1520;
+    border: 1px solid #1a2d45;
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+
+  .info-box h3 {
+    font-size: 10px;
+    font-weight: 600;
+    color: #2a6a9a;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 10px;
+  }
+
+  .check-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .check-list li {
+    font-size: 11.5px;
+    color: #7a9ab5;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .check-list li .dot {
+    font-family: 'IBM Plex Mono', monospace;
+    color: #1e6090;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .check-list li code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: #4a9fd5;
+  }
+
+  /* Accent line on step number */
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: #1a3a60;
+    border-radius: 6px 0 0 6px;
+  }
+
+  .step.s1::before { background: #1a5a8a; }
+  .step.s2::before { background: #1a7a6a; }
+  .step.s3::before { background: #4a5a1a; }
+  .step.s4::before { background: #5a3a1a; }
+  .step.s5::before { background: #5a1a4a; }
+  .step.s6::before { background: #1a4a8a; }
+
+  @media print {
+    body { background: white; color: #1a1a2e; padding: 16px; }
+    .step, .info-box, .flow-bar { border-color: #ccc; background: #f9f9f9; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>F5 BIG-IP + Akamai API Security</h1>
+      <div class="sub">HSL over HTTPS · Integration Cheat Sheet · mcropsey-juiceshop-f5.eastus.cloudapp.azure.com</div>
+    </div>
+    <div class="badge">iRule v5.0.0</div>
+  </div>
+
+  <!-- Traffic Flow -->
+  <div class="flow-bar">
+    <span class="label">Flow</span>
+    <span class="flow-item">juiceshop_vs</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-item">HSL iRule</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-item">noname-security-hsl-https</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-item">noname-security-engine-https-vs</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-item">noname-security-engine-https-pool</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-item">michaels-lab.nonamesec.com:443</span>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps">
+
+    <!-- Step 1 -->
+    <div class="step s1">
+      <div class="step-num">Step 1 · Akamai UI</div>
+      <div class="step-title">Generate iRule <span class="object-type">Prerequisite</span></div>
+      <div class="object-name">Settings → Integrations → Traffic Sources → F5</div>
+      <div class="step-desc">
+        Download <strong>send-to-noname.tcl</strong> from the UI. Pre-baked with your <strong>source key UUID</strong> and engine hostname. Without this file you can't proceed.
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step s2">
+      <div class="step-num">Step 2 · Pool</div>
+      <div class="step-title">Engine Pool <span class="object-type">Pool</span></div>
+      <div class="object-name">noname-security-engine-https-pool</div>
+      <div class="step-desc">
+        Points directly at the <strong>Noname cloud engine</strong>. Final destination for all mirrored traffic.
+      </div>
+      <div class="key-settings">
+        <div class="kv"><span class="kv-key">Address</span><span class="kv-val">michaels-lab.nonamesec.com</span></div>
+        <div class="kv"><span class="kv-key">Port</span><span class="kv-val">443</span></div>
+        <div class="kv"><span class="kv-key">Monitor</span><span class="kv-val">tcp</span></div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step s3">
+      <div class="step-num">Step 3 · Virtual Server</div>
+      <div class="step-title">TLS Relay VS <span class="object-type">Virtual Server</span></div>
+      <div class="object-name">noname-security-engine-https-vs</div>
+      <div class="step-desc">
+        Internal-only relay. <strong>Wraps plain HTTP from the iRule in TLS</strong> before it leaves the F5. Never externally reachable.
+      </div>
+      <div class="key-settings">
+        <div class="kv"><span class="kv-key">Dest IP</span><span class="kv-val">10.20.4.100 : 80</span></div>
+        <div class="kv"><span class="kv-key">SSL (Server)</span><span class="kv-val">serverssl ← encrypts outbound</span></div>
+        <div class="kv"><span class="kv-key">Default Pool</span><span class="kv-val">noname-security-engine-https-pool</span></div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step s4">
+      <div class="step-num">Step 4 · Pool</div>
+      <div class="step-title">HSL Target Pool <span class="object-type">Pool</span></div>
+      <div class="object-name">noname-security-hsl-https</div>
+      <div class="step-desc">
+        The pool the <strong>iRule hands traffic to</strong>. Points at the relay VS. HSL requires a pool object — this is the bridge.
+      </div>
+      <div class="key-settings">
+        <div class="kv"><span class="kv-key">Address</span><span class="kv-val">10.20.4.100 (relay VS IP)</span></div>
+        <div class="kv"><span class="kv-key">Port</span><span class="kv-val">80</span></div>
+        <div class="kv"><span class="kv-key">Monitor</span><span class="kv-val">tcp_half_open</span></div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step s5 wide">
+      <div class="step-num">Step 5 · iRule</div>
+      <div class="step-title">HSL Logger iRule <span class="object-type">iRule</span></div>
+      <div class="object-name">noname-hsl-https-logger &nbsp;·&nbsp; paste contents of send-to-noname.tcl</div>
+      <div class="step-desc">
+        Fires on every HTTP request/response on <strong>juiceshop_vs</strong>. Captures full transaction, base64-encodes it, and asynchronously POSTs to the HSL pool. <strong>App traffic is never held up.</strong>
+      </div>
+      <div class="key-settings" style="flex-direction: row; flex-wrap: wrap; gap: 6px 24px; margin-top: 10px;">
+        <div class="kv"><span class="kv-key">nn_pool</span><span class="kv-val">noname-security-hsl-https</span></div>
+        <div class="kv"><span class="kv-key">nn_engine_hostname</span><span class="kv-val">michaels-lab.nonamesec.com</span></div>
+        <div class="kv"><span class="kv-key">nn_base64_source_key</span><span class="kv-val">04f72d92-81f0-4c5f-8142-7f2b60142ac9</span></div>
+        <div class="kv"><span class="kv-key">nn_payload_max_size</span><span class="kv-val">131072 (128KB)</span></div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step s6 wide">
+      <div class="step-num">Step 6 · Attach</div>
+      <div class="step-title">Attach iRule to juiceshop_vs <span class="object-type">The On Switch</span></div>
+      <div class="object-name">juiceshop_vs → Resources tab → iRules → Manage → move noname-hsl-https-logger to Enabled</div>
+      <div class="step-desc">
+        Nothing sends traffic to Noname until this step. Attaching the iRule here activates the entire chain.
+      </div>
+      <div class="warn">
+        <span>⚠ DO NOT</span> attach the iRule to <code>noname-security-engine-https-vs</code> — it will create an infinite traffic loop.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer: Verify + Save -->
+  <div class="footer-grid">
+    <div class="info-box">
+      <h3>Verify</h3>
+      <ul class="check-list">
+        <li><span class="dot">▸</span><span>Pools → <code>noname-security-hsl-https</code> → green</span></li>
+        <li><span class="dot">▸</span><span>Pools → <code>noname-security-engine-https-pool</code> → green</span></li>
+        <li><span class="dot">▸</span><span>iRules → <code>noname-hsl-https-logger</code> → Statistics → executions climbing</span></li>
+        <li><span class="dot">▸</span><span>Akamai UI → traffic from juiceshop appears within ~2 min</span></li>
+      </ul>
+    </div>
+    <div class="info-box">
+      <h3>Save Config &amp; Gotchas</h3>
+      <ul class="check-list">
+        <li><span class="dot">▸</span><span>SSH → <code>tmsh save sys config</code> — no GUI save button on v21</span></li>
+        <li><span class="dot">▸</span><span>Port 443 must be open outbound: F5 → <code>98.88.158.72</code></span></li>
+        <li><span class="dot">▸</span><span>Payloads &gt;128KB are skipped by the iRule</span></li>
+        <li><span class="dot">▸</span><span>SSL Passthrough on juiceshop_vs = no visibility (must terminate SSL)</span></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
