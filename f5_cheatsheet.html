@@ -3,293 +3,291 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F5 + Akamai API Security — Demo Cheat Sheet</title>
+<title>F5 + Akamai API Security — Quick Deployment Guide</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap');
 
+  :root {
+    --bg:       #07101c;
+    --surface:  #0d1b2a;
+    --surface2: #122338;
+    --border:   #1b3350;
+    --border2:  #254468;
+    --text:     #d4e6f5;
+    --muted:    #5c8ab0;
+    --accent:   #2a9fd6;
+    --accent2:  #1de9b6;
+    --warn:     #f0a500;
+    --warn-bg:  #1a1200;
+    --danger:   #e05c5c;
+    --danger-bg:#1a0808;
+    --good:     #36c47a;
+    --good-bg:  #071a0e;
+    --step-w:   26px;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: #0a0e17;
-    color: #e2e8f0;
-    min-height: 100vh;
-    padding: 32px 24px;
-  }
-
-  .page {
-    max-width: 860px;
-    margin: 0 auto;
-  }
-
-  /* Header */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 28px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #1e2d45;
-  }
-
-  .header-left h1 {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-    color: #f0f6ff;
-  }
-
-  .header-left .sub {
-    font-size: 12px;
-    color: #4a7fa5;
-    font-family: 'IBM Plex Mono', monospace;
-    margin-top: 4px;
-    letter-spacing: 0.5px;
-  }
-
-  .badge {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    background: #0d2137;
-    border: 1px solid #1e4060;
-    color: #4a9fd5;
-    padding: 4px 10px;
-    border-radius: 3px;
-    letter-spacing: 0.8px;
-  }
-
-  /* Flow bar */
-  .flow-bar {
-    background: #0d1a2a;
-    border: 1px solid #1a3050;
-    border-radius: 6px;
-    padding: 12px 18px;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 0;
-    flex-wrap: wrap;
-    row-gap: 6px;
-  }
-
-  .flow-bar .label {
-    font-size: 10px;
-    color: #3a6a8a;
-    font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: 1px;
-    margin-right: 14px;
-    text-transform: uppercase;
-  }
-
-  .flow-item {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: #7ec8e3;
-    white-space: nowrap;
-  }
-
-  .flow-arrow {
-    color: #1e4060;
-    margin: 0 8px;
-    font-size: 13px;
-  }
-
-  /* Steps grid */
-  .steps {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .step {
-    background: #0d1520;
-    border: 1px solid #1a2d45;
-    border-radius: 6px;
-    padding: 16px 18px;
-    position: relative;
-    transition: border-color 0.2s;
-  }
-
-  .step:hover {
-    border-color: #2a5a8a;
-  }
-
-  .step-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    color: #1e4060;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-
-  .step-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #f0f6ff;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .object-type {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    background: #0a1e35;
-    border: 1px solid #1a3a5a;
-    color: #3a7fa5;
-    padding: 2px 6px;
-    border-radius: 2px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .object-name {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: #4a9fd5;
-    margin-bottom: 8px;
-  }
-
-  .step-desc {
-    font-size: 12px;
-    color: #7a9ab5;
-    line-height: 1.55;
-  }
-
-  .step-desc strong {
-    color: #a8c8e0;
-    font-weight: 600;
-  }
-
-  /* Key settings */
-  .key-settings {
-    margin-top: 9px;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .kv {
-    display: flex;
-    gap: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    align-items: baseline;
-  }
-
-  .kv-key {
-    color: #2a5a7a;
-    min-width: 90px;
-    flex-shrink: 0;
-  }
-
-  .kv-val {
-    color: #5ab0d5;
-  }
-
-  /* Wide step */
-  .step.wide {
-    grid-column: span 2;
-  }
-
-  /* Warning note */
-  .warn {
-    background: #12100a;
-    border: 1px solid #3a2a0a;
-    border-left: 3px solid #c07010;
-    border-radius: 4px;
-    padding: 10px 14px;
-    font-size: 11px;
-    color: #a07030;
-    margin-top: 9px;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 32px 28px;
     line-height: 1.5;
   }
 
-  .warn span {
-    color: #c07010;
-    font-weight: 600;
+  .page { max-width: 980px; margin: 0 auto; }
+
+  /* ─── HEADER ─── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--border2);
+  }
+  .header-title { font-size: 24px; font-weight: 600; color: #eaf4ff; letter-spacing: -.3px; }
+  .header-sub { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 5px; }
+  .version-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--accent);
+    letter-spacing: .5px;
+    white-space: nowrap;
+    margin-top: 4px;
   }
 
-  /* Footer */
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 0;
-  }
-
-  .info-box {
-    background: #0d1520;
-    border: 1px solid #1a2d45;
+  /* ─── FLOW BAR ─── */
+  .flow-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
     border-radius: 6px;
-    padding: 14px 16px;
-  }
-
-  .info-box h3 {
-    font-size: 10px;
-    font-weight: 600;
-    color: #2a6a9a;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    font-family: 'IBM Plex Mono', monospace;
-    margin-bottom: 10px;
-  }
-
-  .check-list {
-    list-style: none;
+    padding: 12px 18px;
+    margin-bottom: 28px;
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+    row-gap: 6px;
   }
-
-  .check-list li {
-    font-size: 11.5px;
-    color: #7a9ab5;
-    display: flex;
-    gap: 8px;
-    align-items: baseline;
+  .flow-label { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-right: 14px; }
+  .flow-node {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    background: #0a1e10;
+    border: 1px solid #1d4a2e;
+    padding: 3px 9px;
+    border-radius: 3px;
+    white-space: nowrap;
   }
+  .flow-node.relay { color: var(--accent); background: #071520; border-color: #1a3a55; }
+  .flow-node.dest { color: #f0c060; background: #1a1200; border-color: #3a2800; }
+  .flow-arrow { color: var(--border2); margin: 0 7px; font-size: 14px; }
 
-  .check-list li .dot {
-    font-family: 'IBM Plex Mono', monospace;
-    color: #1e6090;
-    font-size: 10px;
-    flex-shrink: 0;
+  /* ─── LAYOUT ─── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .full { margin-bottom: 16px; }
+
+  /* ─── STEP CARD ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
   }
-
-  .check-list li code {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    color: #4a9fd5;
-  }
-
-  /* Accent line on step number */
-  .step::before {
+  .card::before {
     content: '';
     position: absolute;
     top: 0; left: 0;
-    width: 3px;
-    height: 100%;
-    background: #1a3a60;
-    border-radius: 6px 0 0 6px;
+    width: 100%; height: 3px;
+  }
+  .card.s1::before { background: linear-gradient(90deg, #2a9fd6, #1de9b6); }
+  .card.s2::before { background: linear-gradient(90deg, #1de9b6, #36c47a); }
+  .card.s2a::before { background: linear-gradient(90deg, #f0a500, #e05c5c); }
+  .card.s3::before { background: linear-gradient(90deg, #36c47a, #8adf70); }
+  .card.s4::before { background: linear-gradient(90deg, #2a9fd6, #8870ff); }
+  .card.s5::before { background: linear-gradient(90deg, #8870ff, #e05c5c); }
+  .card.s6::before { background: linear-gradient(90deg, #e05c5c, #f0a500); }
+  .card.s7::before { background: linear-gradient(90deg, #f0a500, #2a9fd6); }
+  .card.verify::before { background: linear-gradient(90deg, #36c47a, #2a9fd6); }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .8px;
+    color: var(--muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #eaf4ff;
+  }
+  .obj-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .tag-pool { background: #071a10; border: 1px solid #1d4a2e; color: #36c47a; }
+  .tag-vs   { background: #071520; border: 1px solid #1a3a55; color: #2a9fd6; }
+  .tag-irule{ background: #1a0820; border: 1px solid #3a1a50; color: #c080ff; }
+  .tag-ui   { background: #1a0e00; border: 1px solid #3a2800; color: #f0a500; }
+  .tag-attach{ background: #1a0808; border: 1px solid #3a1a1a; color: #e05c5c; }
+  .tag-save { background: #071a10; border: 1px solid #1d3a28; color: var(--accent2); }
+  .tag-cmd  { background: #0a1520; border: 1px solid #1a3040; color: #60b0d5; }
+
+  .card-body { padding: 14px 16px; }
+
+  /* ─── KV TABLE ─── */
+  .kv-table { width: 100%; border-collapse: collapse; }
+  .kv-table tr td { padding: 4px 0; vertical-align: top; }
+  .kv-table tr td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    width: 38%;
+    padding-right: 10px;
+    white-space: nowrap;
+  }
+  .kv-table tr td:last-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--accent);
+  }
+  .kv-table tr td:last-child .hi { color: var(--accent2); }
+  .kv-divider td { padding-top: 8px !important; border-top: 1px solid var(--border); }
+
+  /* ─── CODE BLOCK ─── */
+  .code-block {
+    background: #040d16;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: #c0d8f0;
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .code-block .c  { color: #4a7090; }
+  .code-block .k  { color: var(--accent2); }
+  .code-block .s  { color: #f0c060; }
+  .code-block .cmd{ color: #a0d8ff; }
+
+  /* ─── CALLOUT BOXES ─── */
+  .callout {
+    display: flex;
+    gap: 10px;
+    border-radius: 5px;
+    padding: 9px 12px;
+    margin: 8px 0;
+    font-size: 11.5px;
+    line-height: 1.55;
+  }
+  .callout-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body strong { display: block; font-size: 11px; font-weight: 600; margin-bottom: 2px; letter-spacing: .3px; }
+
+  .callout.warn  { background: var(--warn-bg);   border: 1px solid #3a2800; border-left: 3px solid var(--warn); color: #c09040; }
+  .callout.warn strong { color: var(--warn); }
+  .callout.danger{ background: var(--danger-bg); border: 1px solid #3a1010; border-left: 3px solid var(--danger); color: #c06060; }
+  .callout.danger strong { color: var(--danger); }
+  .callout.note  { background: #07131f;           border: 1px solid #1a3a55; border-left: 3px solid var(--accent); color: #5c9ab5; }
+  .callout.note strong { color: var(--accent); }
+  .callout.good  { background: var(--good-bg);   border: 1px solid #1a4030; border-left: 3px solid var(--good); color: #409060; }
+  .callout.good strong { color: var(--good); }
+
+  /* ─── DESCRIPTION TEXT ─── */
+  .desc {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .desc strong { color: #90b8d5; }
+
+  /* ─── BULLETS ─── */
+  .steps-list { list-style: none; }
+  .steps-list li {
+    font-size: 11.5px;
+    color: #7a9ab5;
+    padding: 3px 0 3px 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .steps-list li::before { content: '▸'; position: absolute; left: 0; color: var(--border2); font-size: 10px; top: 5px; }
+
+  /* ─── SECTION DIVIDER ─── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0 14px;
+  }
+  .section-divider span {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .section-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+
+  /* ─── OBJECT NAME ─── */
+  .obj-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--accent);
+    background: #071520;
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 10px;
   }
 
-  .step.s1::before { background: #1a5a8a; }
-  .step.s2::before { background: #1a7a6a; }
-  .step.s3::before { background: #4a5a1a; }
-  .step.s4::before { background: #5a3a1a; }
-  .step.s5::before { background: #5a1a4a; }
-  .step.s6::before { background: #1a4a8a; }
+  /* ─── VERIFY GRID ─── */
+  .verify-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .verify-item:last-child { border-bottom: none; }
+  .verify-dot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid var(--good); flex-shrink: 0; margin-top: 4px; }
+  .verify-dot.warn { border-color: var(--warn); }
+  .verify-text { font-size: 11.5px; color: #7a9ab5; line-height: 1.5; }
+  .verify-text code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); }
 
   @media print {
     body { background: white; color: #1a1a2e; padding: 16px; }
-    .step, .info-box, .flow-bar { border-color: #ccc; background: #f9f9f9; }
+    .card, .flow-bar { border-color: #ccc; background: #f9f9f9; }
   }
 </style>
 </head>
@@ -298,137 +296,321 @@
 
   <!-- Header -->
   <div class="header">
-    <div class="header-left">
-      <h1>F5 BIG-IP + Akamai API Security</h1>
-      <div class="sub">HSL over HTTPS · Integration Cheat Sheet · mcropsey-juiceshop-f5.eastus.cloudapp.azure.com</div>
+    <div>
+      <div class="header-title">F5 BIG-IP + Akamai API Security</div>
+      <div class="header-sub">HSL over HTTPS · Quick Deployment Guide · iRule v5.0.0</div>
     </div>
-    <div class="badge">iRule v5.0.0</div>
+    <div>
+      <div class="version-badge">mcropsey-juiceshop-f5.eastus.cloudapp.azure.com</div>
+    </div>
   </div>
 
   <!-- Traffic Flow -->
   <div class="flow-bar">
-    <span class="label">Flow</span>
-    <span class="flow-item">juiceshop_vs</span>
+    <span class="flow-label">Traffic Flow</span>
+    <span class="flow-node">juiceshop_vs</span>
     <span class="flow-arrow">→</span>
-    <span class="flow-item">HSL iRule</span>
+    <span class="flow-node">HSL iRule</span>
     <span class="flow-arrow">→</span>
-    <span class="flow-item">noname-security-hsl-https</span>
+    <span class="flow-node relay">noname-security-hsl-https</span>
     <span class="flow-arrow">→</span>
-    <span class="flow-item">noname-security-engine-https-vs</span>
+    <span class="flow-node relay">noname-security-engine-https-vs</span>
     <span class="flow-arrow">→</span>
-    <span class="flow-item">noname-security-engine-https-pool</span>
-    <span class="flow-arrow">→</span>
-    <span class="flow-item">michaels-lab.nonamesec.com:443</span>
+    <span class="flow-node relay">noname-security-engine-https-pool</span>
+    <span class="flow-arrow">→ TLS →</span>
+    <span class="flow-node dest">michaels-lab.nonamesec.com:443</span>
   </div>
 
-  <!-- Steps -->
-  <div class="steps">
+  <!-- Section: Prerequisites -->
+  <div class="section-divider"><span>Prerequisites</span><hr></div>
+  <div class="full">
+    <div class="card s1">
+      <div class="card-head">
+        <span class="step-num">Before You Start</span>
+        <span class="card-title">Download iRule from Akamai API Security UI</span>
+        <span class="obj-tag tag-ui">Akamai UI</span>
+      </div>
+      <div class="card-body">
+        <p class="desc">You need the <strong>send-to-noname.tcl</strong> file before you can proceed. It is pre-baked with your source key UUID and engine hostname — without it you cannot complete Step 5.</p>
+        <ul class="steps-list">
+          <li>Navigate to <strong>Settings → Integrations → Traffic Sources → F5</strong></li>
+          <li>Click Add Integration, name it, select <strong>HSL</strong>, select your engine</li>
+          <li>Download and extract the Zip file — it contains <strong>send-to-noname.tcl</strong></li>
+        </ul>
+        <div class="callout note" style="margin-top:10px;">
+          <span class="callout-icon">ℹ</span>
+          <div class="callout-body"><strong>SSL Requirement</strong>This integration requires SSL Offloading or SSL Bridging on the F5. SSL Passthrough will NOT work — the iRule cannot read encrypted payloads.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Build Order -->
+  <div class="section-divider"><span>Build in Order — Steps 1–4 must be done before Step 5</span><hr></div>
+
+  <!-- Steps 1 & 2 -->
+  <div class="two-col">
 
     <!-- Step 1 -->
-    <div class="step s1">
-      <div class="step-num">Step 1 · Akamai UI</div>
-      <div class="step-title">Generate iRule <span class="object-type">Prerequisite</span></div>
-      <div class="object-name">Settings → Integrations → Traffic Sources → F5</div>
-      <div class="step-desc">
-        Download <strong>send-to-noname.tcl</strong> from the UI. Pre-baked with your <strong>source key UUID</strong> and engine hostname. Without this file you can't proceed.
+    <div class="card s2">
+      <div class="card-head">
+        <span class="step-num">Step 1</span>
+        <span class="card-title">Create Engine Pool</span>
+        <span class="obj-tag tag-pool">Pool</span>
+      </div>
+      <div class="card-body">
+        <div class="obj-name">noname-security-engine-https-pool</div>
+        <p class="desc">Final destination for all mirrored traffic. Points directly at the Noname cloud engine.</p>
+        <table class="kv-table">
+          <tr><td>Name</td><td>noname-security-engine-https-pool</td></tr>
+          <tr><td>Node Type</td><td><span class="hi">FQDN</span> (not IP — follows DNS changes)</td></tr>
+          <tr><td>Address</td><td>michaels-lab.nonamesec.com</td></tr>
+          <tr><td>Service Port</td><td>443</td></tr>
+          <tr><td>Health Monitor</td><td><span class="hi">tcp</span> initially — then see Step 1a</td></tr>
+        </table>
+        <div class="callout warn" style="margin-top:10px;">
+          <span class="callout-icon">⚠</span>
+          <div class="callout-body"><strong>Do NOT use default https monitor</strong>The engine is behind an AWS ALB. The default F5 https monitor sends the pool node IP as the Host header — the ALB returns 404, and all members show red. Use tcp for now, then apply the custom monitor in Step 1a below.</div>
+        </div>
       </div>
     </div>
 
-    <!-- Step 2 -->
-    <div class="step s2">
-      <div class="step-num">Step 2 · Pool</div>
-      <div class="step-title">Engine Pool <span class="object-type">Pool</span></div>
-      <div class="object-name">noname-security-engine-https-pool</div>
-      <div class="step-desc">
-        Points directly at the <strong>Noname cloud engine</strong>. Final destination for all mirrored traffic.
+    <!-- Step 1a -->
+    <div class="card s2a">
+      <div class="card-head">
+        <span class="step-num">Step 1a · SSH Required</span>
+        <span class="card-title">Create Custom HTTPS Monitor</span>
+        <span class="obj-tag tag-cmd">tmsh</span>
       </div>
-      <div class="key-settings">
-        <div class="kv"><span class="kv-key">Address</span><span class="kv-val">michaels-lab.nonamesec.com</span></div>
-        <div class="kv"><span class="kv-key">Port</span><span class="kv-val">443</span></div>
-        <div class="kv"><span class="kv-key">Monitor</span><span class="kv-val">tcp</span></div>
+      <div class="card-body">
+        <div class="obj-name">noname-https-monitor</div>
+        <p class="desc">The AWS ALB requires a correct <strong>Host header</strong> to route health check requests. Run these commands on the F5 via SSH to create a custom monitor that sends the proper hostname:</p>
+        <div class="code-block"><span class="cmd">tmsh</span> create ltm monitor https noname-https-monitor \
+  defaults-from https \
+  send <span class="s">"GET / HTTP/1.1\r\nHost: michaels-lab.nonamesec.com\r\nConnection: close\r\n\r\n"</span> \
+  recv <span class="s">"HTTP"</span>
+
+<span class="cmd">tmsh</span> modify ltm pool \
+  noname-security-engine-https-pool \
+  monitor noname-https-monitor
+
+<span class="cmd">tmsh</span> save sys config</div>
+        <div class="callout good" style="margin-top:6px;">
+          <span class="callout-icon">✓</span>
+          <div class="callout-body"><strong>After running this</strong>The engine pool should turn green within ~30 seconds. If it stays red, test with: <code style="font-family:JetBrains Mono,monospace;font-size:10px;">curl -vk https://michaels-lab.nonamesec.com</code></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Steps 2 & 3 -->
+  <div class="two-col">
+
+    <!-- Step 2 -->
+    <div class="card s3">
+      <div class="card-head">
+        <span class="step-num">Step 2</span>
+        <span class="card-title">Create TLS Relay Virtual Server</span>
+        <span class="obj-tag tag-vs">Virtual Server</span>
+      </div>
+      <div class="card-body">
+        <div class="obj-name">noname-security-engine-https-vs</div>
+        <p class="desc">Internal-only relay. The iRule cannot send directly over HTTPS, so it sends plain HTTP to this VS, which <strong>wraps the connection in TLS</strong> before it leaves the F5. Never externally reachable.</p>
+        <table class="kv-table">
+          <tr><td>Destination IP</td><td><span class="hi">10.20.4.100</span> — NOT a Self IP</td></tr>
+          <tr><td>Service Port</td><td>80 (internal relay — safe)</td></tr>
+          <tr><td>HTTP Profile (Client)</td><td>http</td></tr>
+          <tr><td>SSL Profile (Server)</td><td><span class="hi">serverssl</span> ← encrypts outbound</td></tr>
+          <tr><td>Source Addr Translation</td><td>Auto Map</td></tr>
+          <tr><td>Default Pool</td><td>noname-security-engine-https-pool</td></tr>
+        </table>
+        <div class="callout warn" style="margin-top:10px;">
+          <span class="callout-icon">⚠</span>
+          <div class="callout-body"><strong>Check your Self IPs first</strong>10.20.4.100 must NOT conflict with any F5 Self IP. Verify under Network → Self IPs before saving.</div>
+        </div>
       </div>
     </div>
 
     <!-- Step 3 -->
-    <div class="step s3">
-      <div class="step-num">Step 3 · Virtual Server</div>
-      <div class="step-title">TLS Relay VS <span class="object-type">Virtual Server</span></div>
-      <div class="object-name">noname-security-engine-https-vs</div>
-      <div class="step-desc">
-        Internal-only relay. <strong>Wraps plain HTTP from the iRule in TLS</strong> before it leaves the F5. Never externally reachable.
+    <div class="card s4">
+      <div class="card-head">
+        <span class="step-num">Step 3</span>
+        <span class="card-title">Create HSL Target Pool</span>
+        <span class="obj-tag tag-pool">Pool</span>
       </div>
-      <div class="key-settings">
-        <div class="kv"><span class="kv-key">Dest IP</span><span class="kv-val">10.20.4.100 : 80</span></div>
-        <div class="kv"><span class="kv-key">SSL (Server)</span><span class="kv-val">serverssl ← encrypts outbound</span></div>
-        <div class="kv"><span class="kv-key">Default Pool</span><span class="kv-val">noname-security-engine-https-pool</span></div>
-      </div>
-    </div>
-
-    <!-- Step 4 -->
-    <div class="step s4">
-      <div class="step-num">Step 4 · Pool</div>
-      <div class="step-title">HSL Target Pool <span class="object-type">Pool</span></div>
-      <div class="object-name">noname-security-hsl-https</div>
-      <div class="step-desc">
-        The pool the <strong>iRule hands traffic to</strong>. Points at the relay VS. HSL requires a pool object — this is the bridge.
-      </div>
-      <div class="key-settings">
-        <div class="kv"><span class="kv-key">Address</span><span class="kv-val">10.20.4.100 (relay VS IP)</span></div>
-        <div class="kv"><span class="kv-key">Port</span><span class="kv-val">80</span></div>
-        <div class="kv"><span class="kv-key">Monitor</span><span class="kv-val">tcp_half_open</span></div>
-      </div>
-    </div>
-
-    <!-- Step 5 -->
-    <div class="step s5 wide">
-      <div class="step-num">Step 5 · iRule</div>
-      <div class="step-title">HSL Logger iRule <span class="object-type">iRule</span></div>
-      <div class="object-name">noname-hsl-https-logger &nbsp;·&nbsp; paste contents of send-to-noname.tcl</div>
-      <div class="step-desc">
-        Fires on every HTTP request/response on <strong>juiceshop_vs</strong>. Captures full transaction, base64-encodes it, and asynchronously POSTs to the HSL pool. <strong>App traffic is never held up.</strong>
-      </div>
-      <div class="key-settings" style="flex-direction: row; flex-wrap: wrap; gap: 6px 24px; margin-top: 10px;">
-        <div class="kv"><span class="kv-key">nn_pool</span><span class="kv-val">noname-security-hsl-https</span></div>
-        <div class="kv"><span class="kv-key">nn_engine_hostname</span><span class="kv-val">michaels-lab.nonamesec.com</span></div>
-        <div class="kv"><span class="kv-key">nn_base64_source_key</span><span class="kv-val">04f72d92-81f0-4c5f-8142-7f2b60142ac9</span></div>
-        <div class="kv"><span class="kv-key">nn_payload_max_size</span><span class="kv-val">131072 (128KB)</span></div>
-      </div>
-    </div>
-
-    <!-- Step 6 -->
-    <div class="step s6 wide">
-      <div class="step-num">Step 6 · Attach</div>
-      <div class="step-title">Attach iRule to juiceshop_vs <span class="object-type">The On Switch</span></div>
-      <div class="object-name">juiceshop_vs → Resources tab → iRules → Manage → move noname-hsl-https-logger to Enabled</div>
-      <div class="step-desc">
-        Nothing sends traffic to Noname until this step. Attaching the iRule here activates the entire chain.
-      </div>
-      <div class="warn">
-        <span>⚠ DO NOT</span> attach the iRule to <code>noname-security-engine-https-vs</code> — it will create an infinite traffic loop.
+      <div class="card-body">
+        <div class="obj-name">noname-security-hsl-https</div>
+        <p class="desc">The pool the <strong>iRule hands traffic to via HSL::send</strong>. Points at the relay VS from Step 2. HSL requires a pool object — this is the bridge between the iRule and the TLS relay.</p>
+        <table class="kv-table">
+          <tr><td>Name</td><td><span class="hi">noname-security-hsl-https</span></td></tr>
+          <tr><td>Health Monitor</td><td>tcp_half_open</td></tr>
+          <tr><td>Address</td><td>10.20.4.100 (relay VS IP from Step 2)</td></tr>
+          <tr><td>Service Port</td><td>80 (relay VS port from Step 2)</td></tr>
+          <tr><td>Node Type</td><td>New Node (not FQDN)</td></tr>
+        </table>
+        <div class="callout note" style="margin-top:10px;">
+          <span class="callout-icon">ℹ</span>
+          <div class="callout-body"><strong>Name is hardcoded in iRule</strong>The name <code style="font-family:JetBrains Mono,monospace;font-size:10px;">noname-security-hsl-https</code> is referenced in the TCL file as <code style="font-family:JetBrains Mono,monospace;font-size:10px;">set nn_pool</code>. Do not rename it.</div>
+        </div>
       </div>
     </div>
 
   </div>
 
-  <!-- Footer: Verify + Save -->
-  <div class="footer-grid">
-    <div class="info-box">
-      <h3>Verify</h3>
-      <ul class="check-list">
-        <li><span class="dot">▸</span><span>Pools → <code>noname-security-hsl-https</code> → green</span></li>
-        <li><span class="dot">▸</span><span>Pools → <code>noname-security-engine-https-pool</code> → green</span></li>
-        <li><span class="dot">▸</span><span>iRules → <code>noname-hsl-https-logger</code> → Statistics → executions climbing</span></li>
-        <li><span class="dot">▸</span><span>Akamai UI → traffic from juiceshop appears within ~2 min</span></li>
-      </ul>
+  <!-- Steps 4 & 5 -->
+  <div class="two-col">
+
+    <!-- Step 4 -->
+    <div class="card s5">
+      <div class="card-head">
+        <span class="step-num">Step 4</span>
+        <span class="card-title">Upload HSL iRule</span>
+        <span class="obj-tag tag-irule">iRule</span>
+      </div>
+      <div class="card-body">
+        <div class="obj-name">noname-hsl-https-logger</div>
+        <p class="desc">Navigate to <strong>Local Traffic → iRules → iRule List → Create</strong>. Paste the full contents of <strong>send-to-noname.tcl</strong>. Key values already embedded:</p>
+        <table class="kv-table">
+          <tr><td>nn_pool</td><td>noname-security-hsl-https</td></tr>
+          <tr><td>nn_engine_hostname</td><td>michaels-lab.nonamesec.com</td></tr>
+          <tr><td>nn_payload_max_size</td><td>131072 (128 KB max)</td></tr>
+          <tr><td>nn_base64_source_key</td><td>04f72d92-81f0-4c5f-8142-7f2b60142ac9</td></tr>
+          <tr><td>nn_engine_url</td><td>/engine?message-format=base64</td></tr>
+        </table>
+        <div class="callout note" style="margin-top:10px;">
+          <span class="callout-icon">ℹ</span>
+          <div class="callout-body"><strong>Pre-4.0.0 iRule Fix</strong>If using iRule &lt;4.0.0, replace the HSL::open line with two lines: <code style="font-family:JetBrains Mono,monospace;font-size:10px;">set nn_pool noname-security-hsl-https</code> then <code style="font-family:JetBrains Mono,monospace;font-size:10px;">set nn_hsl [HSL::open -proto TCP -pool $nn_pool]</code>. v5.0.0 already has this fix.</div>
+        </div>
+      </div>
     </div>
-    <div class="info-box">
-      <h3>Save Config &amp; Gotchas</h3>
-      <ul class="check-list">
-        <li><span class="dot">▸</span><span>SSH → <code>tmsh save sys config</code> — no GUI save button on v21</span></li>
-        <li><span class="dot">▸</span><span>Port 443 must be open outbound: F5 → <code>98.88.158.72</code></span></li>
-        <li><span class="dot">▸</span><span>Payloads &gt;128KB are skipped by the iRule</span></li>
-        <li><span class="dot">▸</span><span>SSL Passthrough on juiceshop_vs = no visibility (must terminate SSL)</span></li>
-      </ul>
+
+    <!-- Step 5 -->
+    <div class="card s6">
+      <div class="card-head">
+        <span class="step-num">Step 5 · The On Switch</span>
+        <span class="card-title">Attach iRule to Application VS</span>
+        <span class="obj-tag tag-attach">Activate</span>
+      </div>
+      <div class="card-body">
+        <div class="obj-name">juiceshop_vs → Resources → iRules → Manage</div>
+        <p class="desc">Nothing sends traffic to Noname until this step. Move <strong>noname-hsl-https-logger</strong> from Available to Enabled.</p>
+        <ul class="steps-list">
+          <li>Local Traffic → Virtual Servers → Virtual Server List</li>
+          <li>Click <strong>juiceshop_vs</strong></li>
+          <li>Select the <strong>Resources</strong> tab</li>
+          <li>iRules section → click <strong>Manage</strong></li>
+          <li>Move <strong>noname-hsl-https-logger</strong> → Enabled</li>
+          <li>Click <strong>Finished</strong></li>
+        </ul>
+        <div class="callout danger" style="margin-top:10px;">
+          <span class="callout-icon">🚫</span>
+          <div class="callout-body"><strong>Traffic Loop Risk</strong>NEVER attach this iRule to <code style="font-family:JetBrains Mono,monospace;font-size:10px;">noname-security-engine-https-vs</code> — it creates an infinite loop. Only attach to <code style="font-family:JetBrains Mono,monospace;font-size:10px;">juiceshop_vs</code>.</div>
+        </div>
+        <div class="callout warn" style="margin-top:6px;">
+          <span class="callout-icon">⚠</span>
+          <div class="callout-body"><strong>iRule Ordering Matters</strong>If another iRule on this VS uses <code style="font-family:JetBrains Mono,monospace;font-size:10px;">HTTP::respond</code>, place the Noname iRule BEFORE it. If it uses <code style="font-family:JetBrains Mono,monospace;font-size:10px;">HTTP::collect</code>, place it AFTER.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Step 6 Save -->
+  <div class="full">
+    <div class="card s7">
+      <div class="card-head">
+        <span class="step-num">Step 6 · SSH</span>
+        <span class="card-title">Save Configuration — Required on BIG-IP v21 (no GUI Save button)</span>
+        <span class="obj-tag tag-save">Persist</span>
+      </div>
+      <div class="card-body" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div>
+          <div class="code-block">ssh admin@mcropsey-juiceshop-f5.eastus.cloudapp.azure.com
+tmsh save sys config</div>
+          <p class="desc" style="margin-top:6px;">Run this after <strong>every</strong> configuration change. Without it, changes are lost on reboot.</p>
+        </div>
+        <div>
+          <p class="desc" style="margin-bottom:8px;"><strong>Optional: Exclusion List</strong></p>
+          <div class="code-block"><span class="c"># In iRule editor, find and update:</span>
+set nn_filtered_hosts <span class="s">{"domain.com" "127.0.0.1"}</span>
+<span class="c"># No http:// prefixes. No ports.
+# Subdomains not auto-included.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verify section -->
+  <div class="section-divider"><span>Verification</span><hr></div>
+  <div class="two-col">
+
+    <div class="card verify">
+      <div class="card-head">
+        <span class="step-num">Check Health</span>
+        <span class="card-title">Pool Status</span>
+      </div>
+      <div class="card-body">
+        <div class="verify-item">
+          <div class="verify-dot"></div>
+          <div class="verify-text">Local Traffic → Pools → <code>noname-security-engine-https-pool</code> → <strong>green circle</strong></div>
+        </div>
+        <div class="verify-item">
+          <div class="verify-dot"></div>
+          <div class="verify-text">Local Traffic → Pools → <code>noname-security-hsl-https</code> → <strong>green circle</strong></div>
+        </div>
+        <div class="verify-item">
+          <div class="verify-dot warn"></div>
+          <div class="verify-text">If engine pool is red → custom monitor not applied. Run Step 1a commands via SSH.</div>
+        </div>
+        <div class="verify-item">
+          <div class="verify-dot warn"></div>
+          <div class="verify-text">If HSL pool is red → check that relay VS IP (10.20.4.100) has no conflicts with Self IPs.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card verify">
+      <div class="card-head">
+        <span class="step-num">Check Traffic</span>
+        <span class="card-title">iRule &amp; UI Confirmation</span>
+      </div>
+      <div class="card-body">
+        <div class="verify-item">
+          <div class="verify-dot"></div>
+          <div class="verify-text">iRules → <code>noname-hsl-https-logger</code> → Statistics → <strong>Total Executions climbing</strong> as you generate traffic</div>
+        </div>
+        <div class="verify-item">
+          <div class="verify-dot"></div>
+          <div class="verify-text">Pools → <code>noname-security-hsl-https</code> → Statistics → <strong>Total Requests increasing</strong></div>
+        </div>
+        <div class="verify-item">
+          <div class="verify-dot"></div>
+          <div class="verify-text">Akamai API Security UI → integration → traffic from juiceshop appears within <strong>~2 minutes</strong></div>
+        </div>
+        <div class="verify-item">
+          <div class="verify-dot warn"></div>
+          <div class="verify-text">Traffic still not appearing? Verify <code>nn_engine_hostname</code> in iRule matches your engine domain. Check port 443 open to <code>98.88.158.72</code>.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Known Gotchas -->
+  <div class="section-divider"><span>Gotchas &amp; Limitations</span><hr></div>
+  <div class="three-col">
+    <div class="callout warn" style="margin:0; flex-direction:column; gap:4px;">
+      <div style="font-size:11px;font-weight:600;color:var(--warn);">⚠ Payload Size Limit</div>
+      <div>Payloads &gt;128KB are skipped by the iRule entirely. Adjustable via <code style="font-family:JetBrains Mono,monospace;font-size:10px;">nn_payload_max_size</code> but larger values impact F5 performance.</div>
+    </div>
+    <div class="callout danger" style="margin:0; flex-direction:column; gap:4px;">
+      <div style="font-size:11px;font-weight:600;color:var(--danger);">🚫 SSL Passthrough</div>
+      <div>SSL Passthrough on juiceshop_vs means the iRule cannot read encrypted traffic. F5 must terminate (offload or bridge) SSL for this integration to work.</div>
+    </div>
+    <div class="callout note" style="margin:0; flex-direction:column; gap:4px;">
+      <div style="font-size:11px;font-weight:600;color:var(--accent);">ℹ F5 Version Bug</div>
+      <div>BIG-IP 14.1.4.6 and 14.1.5.x with HTTP chunking enabled may have issues. Also: integration may count against your F5 license bandwidth.</div>
     </div>
   </div>
 
